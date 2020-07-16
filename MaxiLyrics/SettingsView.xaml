@@ -1,0 +1,20 @@
+﻿<ml:SettingsUserControl x:Class="MaxiLyrics.SettingsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:my="clr-namespace:MaxiLyrics"
+        xmlns:ml="clr-namespace:MaxiLyrics.PluginsInterface;assembly=PluginsInterface"
+        Height="450" Width="600" Loaded="SettingsUserControl_Loaded">
+
+    <TabControl TabStripPlacement="Left" x:Name="pluginsTabControl">
+        <TabControl.ItemTemplate>
+            <DataTemplate>
+                <ContentPresenter Content="{Binding Path=Name}" />
+            </DataTemplate>
+        </TabControl.ItemTemplate>
+        <TabControl.ContentTemplate>
+            <DataTemplate>
+                <ContentPresenter Content="{Binding Path=View}"/>
+            </DataTemplate>
+        </TabControl.ContentTemplate>
+    </TabControl>
+</ml:SettingsUserControl>

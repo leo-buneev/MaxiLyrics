@@ -1,0 +1,119 @@
+﻿<Window x:Class="MaxiLyrics.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mlc="clr-namespace:MaxiLyrics.CustomControls"
+        xmlns:pi="clr-namespace:MaxiLyrics.PluginsInterface;assembly=PluginsInterface"
+        xmlns:ml="clr-namespace:MaxiLyrics"
+        Title="MaxiLyrics" Width="800" Height="600" MinWidth="512" Name="theMainWindow" Loaded="theMainWindow_Loaded" Closing="theMainWindow_Closing">
+    <Window.Resources>
+        <ml:PluginToViewConverter x:Key="pluginToViewConverter" />
+        <ml:PluginToSettingsVisibilityConverter x:Key="settingsButtonVisibilityConverter" />
+    </Window.Resources>
+    <Grid Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Name="bottomRow" Height="360*" />
+        </Grid.RowDefinitions>
+        <Grid Name="topGrid" Grid.Row="0" Margin="3,0,3,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="35" />
+                <ColumnDefinition Width="25" />
+            </Grid.ColumnDefinitions>
+            <ToggleButton Name="showPlaylistButton" 
+                    Grid.Column="1" Height="20" Width="20"
+                    Content="Pls" FontSize="11" IsChecked="True" Unchecked="showPlaylistButton_Unchecked">
+                <ToggleButton.Triggers>
+                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <mlc:GridLengthAnimation Storyboard.TargetName="playlistColumn" Storyboard.TargetProperty="Width" 
+                                                        Duration="0:0:0.3" To="0" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <mlc:GridLengthAnimation x:Name="showingPlaylistStoryboard"
+                                                        Storyboard.TargetName="playlistColumn" Storyboard.TargetProperty="Width"
+                                                        Duration="0:0:0.3" From="0" To="40*"  
+                                                        FillBehavior="Stop" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ToggleButton.Triggers>
+            </ToggleButton>
+            <Button Name="settingsButton"
+                    Content="&#x2692;" FontFamily="Arial" FontSize="22" FontWeight="Bold" Foreground="Brown"
+                    Grid.Column="2"
+                    Height="30" Width="30"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="settingsButton_Click" />
+            <ToggleButton Name="showPluginsButton" 
+                    Grid.Column="3" Height="20" Width="20"
+                    Content="Plg" FontSize="11" IsChecked="True" Unchecked="showPluginsButton_Unchecked">
+                <ToggleButton.Triggers>
+                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <mlc:GridLengthAnimation Storyboard.TargetName="pluginsColumn" Duration="0:0:0.3" Storyboard.TargetProperty="Width" To="0" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <mlc:GridLengthAnimation x:Name="showingPluginsStoryboard"
+                                                        Storyboard.TargetName="pluginsColumn" Storyboard.TargetProperty="Width" 
+                                                        Duration="0:0:0.3" From="0" To="60*"
+                                                        FillBehavior="Stop" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ToggleButton.Triggers>
+            </ToggleButton>
+        </Grid>
+        <Grid Name="bottomGrid" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Name="playlistColumn" Width="40*" />
+                <ColumnDefinition Name="pluginsColumn" Width="60*" />
+            </Grid.ColumnDefinitions>
+            <TabControl Name="pluginsTabControl"
+                        Grid.Row="1" Grid.Column="1"
+                        Height="Auto" Margin="5,0,0,0" Width="Auto"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Path=(pi:IPlugin.Name)}" FontSize="14" />
+                            <TextBlock Visibility="{Binding Converter={StaticResource ResourceKey=settingsButtonVisibilityConverter}}" Text="&#x2692;" FontFamily="Arial" FontSize="16" Margin="5,0,0,0" FontWeight="Bold" Foreground="Brown" Opacity="0.3" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown">
+                                <TextBlock.Triggers>
+                                    <EventTrigger RoutedEvent="TextBlock.MouseEnter">
+                                        <BeginStoryboard><Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3" />
+                                        </Storyboard></BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="TextBlock.MouseLeave">
+                                        <BeginStoryboard><Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.3" Duration="0:0:0.3" />
+                                        </Storyboard></BeginStoryboard>
+                                    </EventTrigger>
+                                </TextBlock.Triggers>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding Converter={StaticResource pluginToViewConverter}}" />
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
+            <GridSplitter Name="gridSplitter"
+                          Grid.Column="1" Grid.Row="0"
+                          Height="Auto" Width="5" Margin="0"
+                          HorizontalAlignment="Left" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndCurrent" ResizeDirection="Columns" IsEnabled="True" DragCompleted="gridSplitter_DragCompleted" />
+        </Grid>
+    </Grid>
+</Window>

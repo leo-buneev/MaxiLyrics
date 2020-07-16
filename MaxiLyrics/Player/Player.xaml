@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="MaxiLyrics.Player" Name="playerPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:me="clr-namespace:MaxiLyrics"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="400">
+    <UserControl.Resources>
+        <me:PlayerButtonValueConverter x:Key="playButtonConverter"/>
+    </UserControl.Resources>
+    <Grid AllowDrop="True" IsEnabled="True" DragEnter="playerPanel_DragEnter" Drop="playerPanel_Drop">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25"/>
+            <ColumnDefinition Width="35"/>
+            <ColumnDefinition Width="25"/>
+            <ColumnDefinition Width="400*"/>
+            <ColumnDefinition Width="100*" MaxWidth="200"/>
+        </Grid.ColumnDefinitions>
+        <MediaElement Name="mediaPlayerElement" 
+                      Width="0" Height="0" Margin="0" 
+                      MediaOpened="mediaPlayerElement_MediaOpened"
+                      MediaEnded="mediaPlayerElement_MediaEnded" />
+        <Button Name="playButton"
+                Content="{Binding ElementName=playerPanel, Path=IsPlaying, Mode=OneWay, Converter={StaticResource playButtonConverter}}"
+                FontFamily="Arial" FontSize="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                Height="30" Width="30" Grid.Column="1"
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                Click="playButton_Click" />
+        <Button Name="nextButton" Width="20" Height="20" Grid.Column="2" Content="►►" FontFamily="MS Gothic" Click="nextButton_Click" />
+        <Button Name="prevButton" 
+                Width="20" Height="20"
+                Grid.Column="0"
+                Content="◄◄" FontFamily="MS Gothic" 
+                Click="prevButton_Click" />
+        <ProgressBar Name="positionSlider"
+                     Height="23" Margin="5" Width="Auto" Grid.Column="3"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                     SmallChange="1000" Minimum="0" LargeChange="5000" 
+                     IsEnabled="{Binding ElementName=playerPanel, Path=CanPlay, Mode=OneWay}"
+                     MouseDown="positionSlider_MouseDown"
+                     MouseUp="positionSlider_MouseUp"
+                     MouseMove="positionSlider_MouseMove" />
+        <Slider Height="23" HorizontalAlignment="Stretch" Margin="5" Name="volumeSlider" VerticalAlignment="Center" Grid.Column="4" Minimum="0.0" Maximum="1.0" SmallChange="0.01" LargeChange="0.1" Value="{Binding ElementName=mediaPlayerElement, Path=Volume}"/>
+    </Grid>
+</UserControl>
